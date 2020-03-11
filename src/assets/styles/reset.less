@@ -1,0 +1,136 @@
+@import "./variable";
+@import "./mixins";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  word-break: break-all;
+}
+
+li {
+  list-style: none;
+}
+
+html, body, #app {
+  height: 100%;
+}
+
+.blue-color {
+  color: @primary-color;
+}
+
+.red-color {
+  color: @red-color;
+}
+
+.orange-color {
+  color: @orange-color;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.el-textarea__inner {
+  padding: 5px 10px;
+}
+
+.bold {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.el-dialog__close {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  margin-top: -10px;
+  margin-right: -10px;
+}
+
+.el-aside, .el-main {
+  overflow: inherit;
+}
+
+.el-main, .el-header, .el-footer {
+  padding: 0!important;
+}
+
+.el-button--primary {
+  background-color: @primary-color;
+  border-color: @primary-color;
+}
+
+.el-button--primary.is-plain:focus, .el-button--primary.is-plain:hover {
+  color: #409EFF;
+  background: #ecf5ff;
+  border-color: #b3d8ff;
+}
+
+.el-dialog__body {
+  padding: 10px 20px 20px;
+}
+
+.el-tree__drop-indicator {
+  height: 2px !important;
+}
+
+.el-tree-node.is-drop-inner > .el-tree-node__content > .custom-tree-node >.tree-node-label {
+  background-color: @primary-color !important;
+  color: @white-color !important;
+}
+
+.highlight-text em{
+  color: @red-color;
+  font-style: normal;
+}
+
+.text-overflow {
+  .text-overflow();
+}
+
+.line-num-overflow-1 {
+  .line-num-overflow(1);
+}
+
+.line-num-overflow-2 {
+  .line-num-overflow(2);
+}
+
+.watermark {
+  .el-collapse-item__wrap {
+    background-color: transparent;
+  }
+  .el-table, .el-table__expanded-cell {
+    background-color: transparent;
+  }
+  .el-table th, .el-table tr {
+    background-color: transparent;
+  }
+}
+
+.order-pool-content{
+  margin: 10px 15px;
+  border: 1px solid @border-color;
+  padding: 15px 10px;
+  border-radius: 5px;
+}
+
+.el-divider--horizontal {
+  margin: 8px 0 10px 0;
+}
+

@@ -1,0 +1,45 @@
+.line-num-overflow(@num) {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: @num;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+}
+
+.text-overflow () {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scrollbar () {
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+  }
+  &::-webkit-scrollbar-track-piece {
+    background-color: rgba(0, 0, 0, 0);
+    border-left: 1px solid rgba(0, 0, 0, 0);
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 5px;
+    min-height: 40px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+  }
+}
