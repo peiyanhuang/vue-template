@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path');
 const webpack = require('webpack');
-const config = require('../config');
+const config = require('./config');
 const utils = require('./utils');
 const vueLoaderConfig = require('./vue-loader.conf');
 
@@ -27,7 +27,7 @@ module.exports = {
 	},
 	output: {
 		path: config.build.assetsRoot,
-		publicPath:  process.env.NODE_ENV === 'production'
+		publicPath: process.env.NODE_ENV === 'production'
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath,
 		filename: '[name].js',

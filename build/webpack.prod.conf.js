@@ -11,19 +11,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-process.env.NODE_ENV = 'production'
-
 const webpackBaseConfig = require('./webpack.base.conf');
-const config = require('../config');
+const config = require('./config');
 const utils = require('./utils');
-const { baseConfig } = require('../src/config');
 
 let webpackConfig = merge(webpackBaseConfig, {
   mode: 'production',
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
-    publicPath: baseConfig.isTest ? '/' : '/cscenter/',
+    publicPath: config.build.assetsPublicPath || '/',
     filename: utils.assetsPath('js/[name].[contenthash].js'),
     chunkFilename: utils.assetsPath('js/[name].[chunkhash].chunk.js'),
   },
@@ -45,6 +42,9 @@ let webpackConfig = merge(webpackBaseConfig, {
   plugins: [
     new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': '"production"'
+    }),
     new webpack.BannerPlugin({
       banner: dayjs().format('YYYY-MM-DD HH:mm:ss')
     }),
@@ -83,8 +83,7 @@ let webpackConfig = merge(webpackBaseConfig, {
 });
 
 if (config.build.productionGzip) {
-  const CompressionWebpackPlugin = require('compression-webpack-plugin')
-
+  const CompressionWebpackPlugin = require('compression-webpack-plugin');
   webpackConfig.plugins.push(
     new CompressionWebpackPlugin({
       asset: '[path].gz[query]',
@@ -97,12 +96,12 @@ if (config.build.productionGzip) {
       threshold: 10240,
       minRatio: 0.8
     })
-  )
+  );
 }
 
 if (config.build.bundleAnalyzerReport) {
-  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-  webpackConfig.plugins.push(new BundleAnalyzerPlugin())
+  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+  webpackConfig.plugins.push(new BundleAnalyzerPlugin());
 }
 
 const spinner = ora('building for production...');

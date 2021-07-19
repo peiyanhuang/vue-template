@@ -6,15 +6,16 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const merge = require('webpack-merge');
 const path = require('path');
-const fs = require('fs');
 const proxyMiddleware = require('http-proxy-middleware');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-const config = require('../config')
-const utils = require('./utils')
+const config = require('./config');
+const utils = require('./utils');
+
+const PORT = process.env.PORT || config.dev.port
 
 /*
  *  配置 热重载
@@ -29,25 +30,23 @@ const webpackConfig = merge(baseConfig, {
   plugins: [
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
-      'process.env': require('../config/dev.env')
+      'process.env': '"development"'
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
-    new webpack.NoEmitOnErrorsPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
       inject: true,
       chunksSortMode: 'auto'
     }),
-    // copy custom static assets
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../static'),
         to: config.dev.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    new OpenBrowserPlugin({ url: `http://${config.dev.host}:${PORT}` })
   ]
 });
 
@@ -62,18 +61,10 @@ Object.keys(webpackConfig.entry).forEach(function (name, i) {
 const app = express();
 
 /* proxy */
-const proxyTable = {
-  '/api': {
-    target: 'http://localhost:8081',
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api': '/api'
-    }
-  }
-};
+const proxyTable = config.dev.proxyTable;
 // proxy api requests
 Object.keys(proxyTable).forEach((context) => {
-  var options = proxyTable[context];
+  let options = proxyTable[context];
   if (typeof options === 'string') {
     options = {
       target: options
@@ -93,18 +84,17 @@ new webpack.ProgressPlugin({
   profile: true,
 }).apply(compiler);
 
-// for browser console output
-new webpack.ProgressPlugin((percent, msg, addInfo) => {
-  percent = Math.floor(percent * 100);
-
-  if (percent === 100) {
-    msg = 'Compilation completed';
-  }
-
-  if (addInfo) {
-    msg = `${msg} (${addInfo})`;
-  }
-}).apply(compiler);
+// console output
+// new webpack.ProgressPlugin((percent, msg, addInfo) => {
+//   percent = Math.floor(percent * 100);
+//   if (percent === 100) {
+//     msg = 'Compilation completed';
+//   }
+//   if (addInfo) {
+//     msg = `${msg} (${addInfo})`;
+//     console.log(msg)
+//   }
+// }).apply(compiler);
 
 // 使用 webpack-dev-middleware 中间件
 let devMiddleware = webpackDevMiddleware(compiler, {
@@ -121,24 +111,24 @@ let hotMiddleware = webpackHotMiddleware(compiler);
 app.use(hotMiddleware);
 
 // webpack插件，监听html文件改变事件
-compiler.plugin('compilation', function (compilation) {
-  compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
-    // 发布事件
-    hotMiddleware.publish({
-      action: 'reload'
-    });
-    if (cb) {
-      cb();
-    }
+compiler.hooks.compilation.tap('compilation', function (compilation) {
+  HtmlWebpackPlugin.getHooks(compilation).afterEmit.tapAsync(
+    'html-webpack-plugin-after-emit',
+    function (_data, cb) {
+      // 发布事件
+      hotMiddleware.publish({
+        action: 'reload'
+      });
+      if (cb) {
+        cb();
+      }
   });
 });
-
-const PORT = process.env.PORT || config.dev.port
 
 app.listen(PORT, function (err) {
   if (err) {
     console.error(err);
     return;
   }
-  console.log(`Listening at http://localhost:${PORT}`);
+  console.log(`Listening at ${config.dev.host}:${PORT}`);
 });

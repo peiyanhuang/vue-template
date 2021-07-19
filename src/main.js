@@ -30,4 +30,6 @@ const app = new Vue({
 
 window.$app = app
 
+console.log(process.env.NODE_ENV)
+
 export default app
